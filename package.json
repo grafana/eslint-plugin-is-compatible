@@ -1,0 +1,55 @@
+{
+  "name": "eslint-plugin-is-compatible",
+  "version": "0.0.2-beta.1",
+  "description": "An ESlint plugin for Grafana plugins to check compatibility with Grafana versions",
+  "main": "./dist/index.js",
+  "files": [
+    "docs/",
+    "lib/"
+  ],
+  "type": "commonjs",
+  "exports": {
+    ".": {
+      "default": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "keywords": [
+    "eslint",
+    "eslintplugin",
+    "eslint-plugin",
+    "typescript"
+  ],
+  "homepage": "https://www.npmjs.com/package/eslint-plugin-demo-typescript",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/francoismassart/eslint-plugin-demo-typescript"
+  },
+  "bugs": "https://github.com/francoismassart/eslint-plugin-demo-typescript/issues",
+  "scripts": {
+    "build": "tsc --build",
+    "build:diagnostics": "tsc --build --diagnostics",
+    "watch": "tsc --watch",
+    "tsup": "tsup ./src/index.ts --outDir lib/",
+    "tsup:watch": "tsup ./lib --watch",
+    "docs:init": "eslint-doc-generator --init-rule-docs",
+    "docs:update": "eslint-doc-generator",
+    "test": "vitest"
+  },
+  "license": "ISC",
+  "dependencies": {
+    "@grafana/levitate": "file:/Users/erik/code/grafana/levitate/grafana-levitate-v0.16.0.tgz",
+    "@typescript-eslint/utils": "^7.13.0",
+    "eslint": "^8.56.0",
+    "semver": "^7.6.3"
+  },
+  "devDependencies": {
+    "@types/eslint": "^8.56.10",
+    "@typescript-eslint/parser": "^7.13.0",
+    "@typescript-eslint/rule-tester": "^7.13.0",
+    "eslint-doc-generator": "^1.7.1",
+    "tsup": "^8.1.0",
+    "typescript": "^5.4.5",
+    "vitest": "^1.6.0"
+  }
+}
