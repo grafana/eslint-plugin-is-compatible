@@ -5,9 +5,9 @@ const { shared, port } = workerData;
 const pluginJson = require(process.cwd() + '/src/plugin.json');
 const minVersion = semver.minVersion(pluginJson.dependencies.grafanaDependency);
 const packages = {
-  '@grafana/ui': [],
-  '@grafana/data': [],
-  '@grafana/runtime': [],
+  '@grafana/ui': '',
+  '@grafana/data': '',
+  '@grafana/runtime': '',
 };
 
 const installPackages = async () => {
@@ -18,7 +18,7 @@ const installPackages = async () => {
         levitate
           .resolvePackage(key + '@' + minVersion)
           .then((p) => {
-            packages[key] = Object.keys(levitate.getExportInfo(p).exports).sort();
+            packages[key] = p; // Object.keys(levitate.getExportInfo(p).exports).sort();
             resolve();
           })
           .catch(console.error);

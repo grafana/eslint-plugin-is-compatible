@@ -2,6 +2,7 @@ import { RuleCreator } from '@typescript-eslint/utils/eslint-utils';
 import path from 'path';
 import fs from 'fs';
 import { Worker, MessageChannel, receiveMessageOnPort } from 'worker_threads';
+import { getExportInfo } from './utils';
 export { ESLintUtils } from '@typescript-eslint/utils';
 
 const { port1: localPort, port2: workerPort } = new MessageChannel();
@@ -19,15 +20,16 @@ const int32 = new Int32Array(shared);
 console.log('Installing lower bound of grafana packages in worker thread...');
 Atomics.wait(int32, 0, 0);
 
-const packagePaths: Record<string, string[]> = receiveMessageOnPort(localPort)?.message;
+const packagePaths: Record<string, string> = receiveMessageOnPort(localPort)?.message;
 
-// Message IDs don't need to be prefixed, I just find it easier to keep track of them this way
-type MessageIds = 'issue:import';
+const packageExports: Record<string, string[]> = {};
+Object.entries(packagePaths).forEach(([pkg, path]) => {
+  packageExports[pkg] = Object.keys(getExportInfo(path).exports).sort();
+});
 
-// The Rule creator returns a function that is used to create a well-typed ESLint rule
-// The parameter passed into RuleCreator is a URL generator function.
 export const createRule = RuleCreator((name) => `https://my-website.io/eslint/${name}`);
 
+type MessageIds = 'issue:import';
 export const importExists = createRule<[], MessageIds>({
   name: 'import-exists',
   meta: {
@@ -55,20 +57,14 @@ export const importExists = createRule<[], MessageIds>({
           // @ts-ignore
           const from = node.parent.source.value as string;
           if (from in packagePaths) {
-            const exportedSymbols = packagePaths[from];
-            if (!exportedSymbols.includes(node.imported.name)) {
-              // const rangeStart = node.range[0];
-              // const range: readonly [number, number] = [rangeStart, rangeStart + 3 /* 'var'.length */];
+            const exportInfo = getExportInfo(packagePaths[from]);
+            // const runtimeExports = getRuntimeExports(exportInfo.exports);
+            const exports = Object.keys(exportInfo.exports).sort();
+            if (!exports.includes(node.imported.name)) {
               context.report({
                 node,
                 data: { member: node.imported.name },
                 messageId: 'issue:import',
-                // suggest: [
-                //   {
-                //     messageId: 'fix:let',
-                //     fix: (fixer) => fixer.replaceTextRange(range, 'let'),
-                //   },
-                // ],
               });
             }
           }
