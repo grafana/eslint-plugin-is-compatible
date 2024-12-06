@@ -14,7 +14,8 @@ const ruleTester = new RuleTester({
 ruleTester.run('eslint-plugin/import-exists', importExists, {
   valid: [
     {
-      code: `import { getBackendSrv, isFetchError } from '@grafana/runtime';`,
+      code: `import { LoadingPlaceholder } from '@grafana/ui';`,
+      // code: `import { getBackendSrv, isFetchError } from '@grafana/runtime';`,
     },
   ],
   invalid: [

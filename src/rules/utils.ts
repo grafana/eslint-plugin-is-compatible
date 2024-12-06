@@ -87,19 +87,7 @@ function getExportSubMembers(symbol: ts.Symbol, program: ts.Program): Record<str
 export function getRuntimeExports(exports: Exports) {
   const result = [];
   for (const [currentExportName, currentExportSymbol] of Object.entries(exports)) {
-    if (currentExportSymbol.flags & ts.SymbolFlags.Function) {
-      result.push(currentExportName);
-    }
-    if (currentExportSymbol.flags & ts.SymbolFlags.Method) {
-      result.push(currentExportName);
-    }
-    if (currentExportSymbol.flags & ts.SymbolFlags.Class) {
-      result.push(currentExportName);
-    }
-    if (currentExportSymbol.flags & ts.SymbolFlags.Enum) {
-      result.push(currentExportName);
-    }
-    if (currentExportSymbol.flags & ts.SymbolFlags.Variable) {
+    if (!(currentExportSymbol.flags & ts.SymbolFlags.Interface) && !(currentExportSymbol.flags & ts.SymbolFlags.Type)) {
       result.push(currentExportName);
     }
   }

@@ -4,7 +4,7 @@ import fs from 'fs';
 import { Worker, MessageChannel, receiveMessageOnPort } from 'worker_threads';
 import semver from 'semver';
 export { ESLintUtils } from '@typescript-eslint/utils';
-import { getExportInfo } from './utils';
+import { getExportInfo, getRuntimeExports } from './utils';
 import { Exports } from '@grafana/levitate';
 import ts from 'typescript';
 
@@ -64,12 +64,10 @@ export const importExists = createRule<[], MessageIds>({
       ImportSpecifier: async (node) => {
         if (node?.imported?.name) {
           // @ts-ignore
-          const identifier = node.parent.source.value as string;
+          const identifier = node.parent.source.value;
           if (identifier in packageExports && Object.keys(packageExports[identifier].exports).length > 0) {
-            // const exportInfo = getExportInfo(packageExports[from]);
-            // const runtimeExports = getRuntimeExports(exportInfo.exports);
-            const exports = Object.keys(packageExports[identifier].exports).sort();
-            if (!exports.includes(node.imported.name)) {
+            const exportsExceptTypesAndInterfaces = getRuntimeExports(packageExports[identifier].exports);
+            if (!exportsExceptTypesAndInterfaces.includes(node.imported.name)) {
               context.report({
                 node,
                 data: { member: node.imported.name, package: `${identifier}@${minVersion}` },
