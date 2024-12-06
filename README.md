@@ -8,7 +8,7 @@ is-compatible is a simple eslint plugin that checks whether imports from any of 
 npm install @sunker/eslint-plugin-is-compatible --save-dev
 ```
 
-### Configure ESLint
+### Configure
 
 Add the following to your Grafana plugin's `.eslintrc`:
 
@@ -22,13 +22,17 @@ Add the following to your Grafana plugin's `.eslintrc`:
 }
 ```
 
-Once the ESlint plugin is installed, you can see the result by running `npm run lint`.
+### Lint
+
+```shell
+npm run lint
+```
 
 If your IDE has an ESlint integration that displays errors and warning in the source code, you may need to restart the ESlint server. In VSCode you can run the task `ESLint: Restart ESlint Server`.
 
 ## How it works
 
-The eslint plugin will check the Grafana plugin's `plugin.json` file to find the lower bound of the range of supported Grafana versions that is specified in the `grafanaDependency` propery. If for example the `grafanaDependency` is set to `>=10.0.2`, `@grafana/ui@10.0.2`, `@grafana/data@10.0.2` and `@grafana/runtime@10.0.2` will be downloaded to the temp directory of the host machine. It will then check that imports from any of these packages within the plugin source code has a corresponding export in version `10.0.2` of these packages. If not, a problem is reported. It currently ignores member that don't exist at runtime such as types, interfaces and enums.
+When the ESlint plugin is loaded the first time, it will check the `grafanaDependency` property in the Grafana plugin's `plugin.json` file to find the min supported Grafana version. If for example the `grafanaDependency` is set to `>=10.0.2`, `@grafana/ui@10.0.2`, `@grafana/data@10.0.2` and `@grafana/runtime@10.0.2` will be downloaded to a temp directory on the host machine. It will then check that imports from any of these packages within the plugin source code has a corresponding export in version `10.0.2` of these packages. If not, a problem is reported. It currently ignores member that don't exist at runtime such as types, interfaces and enums.
 
 ## Known limitations
 
