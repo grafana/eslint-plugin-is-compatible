@@ -1,37 +1,42 @@
 # eslint-plugin-is-compatible
 
-This repo is based on the "[Writing a custom ESLint plugin with Typescript](https://thesonofthomp.medium.com/writing-a-custom-eslint-plugin-with-typescript-08d0e01726d2)" Medium article written by [Adam Thompson
-](https://github.com/thesonofthomp).
+is-compatible is a simple eslint plugin that checks whether imports from any of the Grafana packages (`@grafana/ui`, `@grafana/data` and `@grafana/runtime`) from within a Grafana plugin source code exist in all the Grafana runtimes that the plugin is supposed to support.
 
-## Why this repo?
+## How to install
 
-I was expecting to find a link to a repo with the full code explained in Adam's article but I could not find it.
+```shell
+npm install @sunker/eslint-plugin-is-compatible --save-dev
+```
 
-It will be a quick way to browse the full code on its own and possibly to enhance it by fixing issues.
+### Configure ESLint
 
-## Getting started
+Add the following to your Grafana plugin's `.eslintrc`:
 
-I worked on this repo using `npm` but it should work with other package manager.
+```js
+{
+  ...
+  "plugins": ["@sunker/is-compatible"],
+  "rules": {
+    "@sunker/is-compatible/import-exists": ["warn"]
+  }
+}
+```
 
-### Install
+Once the ESlint plugin is installed, you can see the result by running `npm run lint`.
 
-`npm i`
+If your IDE has an ESlint integration that displays errors and warning in the source code, you may need to restart the ESlint server. In VSCode you can run the task `ESLint: Restart ESlint Server`.
 
-### Build
+## How it works
 
-`npm build`
+The eslint plugin will check the Grafana plugin's `plugin.json` file to find the lower bound of the range of supported Grafana versions that is specified in the `grafanaDependency` propery. If for example the `grafanaDependency` is set to `>=10.0.2`, `@grafana/ui@10.0.2`, `@grafana/data@10.0.2` and `@grafana/runtime@10.0.2` will be downloaded to the temp directory of the host machine. It will then check that imports from any of these packages within the plugin source code has a corresponding export in version `10.0.2` of these packages. If not, a problem is reported. It currently ignores member that don't exist at runtime such as types, interfaces and enums.
 
-### Test
+## Known limitations
 
-`npm test`
+There are a few known limitations:
 
-### Docs
-
-`npm docs:init` will create new files for each rule if necessary.
-
-`npm docs:update` will update existing files and the rules list.
-
-You can see an example of generated documentation in the next section.
+- This eslint plugin may not work as expected if eslint caching is enabled.
+- The `import-exists` rule only checks backwards compatibility. If a member has been removed in an upcoming release of the Grafana packages, it will not be detected.
+- When changing `grafanaDependency`, it may take a while to perform linting the first time as the plugin needs to download the new dependencies for the first time. After that, it will use cached dependencies.
 
 ### Rules
 

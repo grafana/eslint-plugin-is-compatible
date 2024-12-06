@@ -1,12 +1,17 @@
 {
-  "name": "eslint-plugin-is-compatible",
-  "version": "0.0.2-beta.1",
+  "name": "@sunker/eslint-plugin-is-compatible",
+  "version": "0.0.2",
   "description": "An ESlint plugin for Grafana plugins to check compatibility with Grafana versions",
   "main": "./dist/index.js",
   "files": [
     "docs/",
-    "lib/"
+    "lib/",
+    "dist/"
   ],
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/",
+    "access": "public"
+  },
   "type": "commonjs",
   "exports": {
     ".": {
@@ -17,15 +22,14 @@
   "keywords": [
     "eslint",
     "eslintplugin",
-    "eslint-plugin",
-    "typescript"
+    "grafana"
   ],
-  "homepage": "https://www.npmjs.com/package/eslint-plugin-demo-typescript",
+  "homepage": "https://www.npmjs.com/package/@sunker/eslint-plugin-is-compatible",
   "repository": {
     "type": "git",
-    "url": "https://github.com/francoismassart/eslint-plugin-demo-typescript"
+    "url": "https://github.com/sunker/eslint-plugin-is-compatible"
   },
-  "bugs": "https://github.com/francoismassart/eslint-plugin-demo-typescript/issues",
+  "bugs": "https://github.com/sunker/eslint-plugin-is-compatible/issues",
   "scripts": {
     "build": "tsc --build",
     "build:diagnostics": "tsc --build --diagnostics",
@@ -36,7 +40,7 @@
     "docs:update": "eslint-doc-generator",
     "test": "vitest"
   },
-  "license": "ISC",
+  "license": "Apache-2.0",
   "dependencies": {
     "@esm2cjs/execa": "^6.1.1-cjs.1",
     "@grafana/levitate": "^0.15.0",
