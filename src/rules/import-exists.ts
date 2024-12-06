@@ -19,6 +19,7 @@ new Worker(workerModule, {
 const int32 = new Int32Array(shared);
 console.log('Installing lower bound of grafana packages in worker thread...');
 Atomics.wait(int32, 0, 0);
+console.log('Done!');
 
 const packagePaths: Record<string, string> = receiveMessageOnPort(localPort)?.message;
 

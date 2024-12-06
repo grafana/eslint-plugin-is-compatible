@@ -11,6 +11,7 @@ const packages = {
 };
 
 const installPackages = async () => {
+  process.env['LEVITATE_CACHE'] = 'true';
   const levitate = await import('@grafana/levitate');
   return Promise.all(
     Object.keys(packages).map((key) => {
