@@ -2,6 +2,8 @@
 
 is-compatible is a simple eslint plugin that checks whether imports from any of the Grafana packages (`@grafana/ui`, `@grafana/data` and `@grafana/runtime`) from within a Grafana plugin source code exist in all the Grafana runtimes that the plugin is supposed to support.
 
+![Demo](./images/is-compatible.gif)
+
 ## How to install
 
 ```shell
