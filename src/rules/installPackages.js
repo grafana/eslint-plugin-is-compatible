@@ -117,7 +117,7 @@ async function resolvePackage(packageName) {
 
   if (pathExists(tmpFolder)) {
     message = `Package version ${minVersion} resolved from cache`;
-    return getTypeDefinitionFilePath(tmpFolder);
+    return getTypeDefinitionFilePath(path.join(tmpFolder, 'package'));
   }
 
   const installedPackagePath = await downloadNpmPackageAsTarball(packageName);

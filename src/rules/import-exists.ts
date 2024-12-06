@@ -5,6 +5,8 @@ import { Worker, MessageChannel, receiveMessageOnPort } from 'worker_threads';
 import semver from 'semver';
 export { ESLintUtils } from '@typescript-eslint/utils';
 import { getExportInfo } from './utils';
+import { Exports } from '@grafana/levitate';
+import ts from 'typescript';
 
 const pluginJson = require(process.cwd() + '/src/plugin.json');
 const minVersion = semver.minVersion(pluginJson.dependencies.grafanaDependency);
@@ -28,9 +30,9 @@ const { packagePaths, message }: { packagePaths: Record<string, string>; message
   receiveMessageOnPort(localPort)?.message;
 console.log(message);
 
-const packageExports: Record<string, string[]> = {};
+const packageExports: Record<string, { exports: Exports; program: ts.Program }> = {};
 Object.entries(packagePaths).forEach(([pkg, path]) => {
-  packageExports[pkg] = Object.keys(getExportInfo(path).exports).sort();
+  packageExports[pkg] = getExportInfo(path);
 });
 
 export const createRule = RuleCreator((name) => `https://my-website.io/eslint/${name}`);
@@ -45,7 +47,7 @@ export const importExists = createRule<[], MessageIds>({
     hasSuggestions: true,
     messages: {
       'issue:import':
-        'The member "{{member}}" is not available in all runtime environments that this plugin supports. Make sure to check if the member is undefined before accessing it, or it may cause runtime errors.',
+        'The member "{{member}}" is not available in all runtime environments that this plugin supports. Make sure to check if the member is undefined before accessing it, or it may cause runtime errors. "{{package}}" does not export member "{{member}}".',
     },
     schema: [
       {
@@ -62,15 +64,15 @@ export const importExists = createRule<[], MessageIds>({
       ImportSpecifier: async (node) => {
         if (node?.imported?.name) {
           // @ts-ignore
-          const from = node.parent.source.value as string;
-          if (from in packagePaths && packagePaths[from].length > 0) {
-            const exportInfo = getExportInfo(packagePaths[from]);
+          const identifier = node.parent.source.value as string;
+          if (identifier in packageExports && Object.keys(packageExports[identifier].exports).length > 0) {
+            // const exportInfo = getExportInfo(packageExports[from]);
             // const runtimeExports = getRuntimeExports(exportInfo.exports);
-            const exports = Object.keys(exportInfo.exports).sort();
+            const exports = Object.keys(packageExports[identifier].exports).sort();
             if (!exports.includes(node.imported.name)) {
               context.report({
                 node,
-                data: { member: node.imported.name },
+                data: { member: node.imported.name, package: `${identifier}@${minVersion}` },
                 messageId: 'issue:import',
               });
             }

@@ -1,5 +1,5 @@
 {
   "dependencies": {
-    "grafanaDependency": ">=10.3.2"
+    "grafanaDependency": ">=10.4.3"
   }
 }
