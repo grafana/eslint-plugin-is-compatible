@@ -40,9 +40,12 @@ When the ESlint plugin is loaded the first time, it will check the `grafanaDepen
 
 There are a few known limitations:
 
-- This eslint plugin may not work as expected if eslint caching is enabled.
 - The `import-exists` rule only checks backwards compatibility. If a member has been removed in an upcoming release of the Grafana packages, it will not be detected.
 - When changing `grafanaDependency`, it may take a while to perform linting the first time as the plugin needs to download the new dependencies for the first time. After that, it will use cached dependencies.
+
+## Contributing
+
+Refer to the [contributing guidelines](./CONTRIBUTING.md).
 
 ### Rules
 
