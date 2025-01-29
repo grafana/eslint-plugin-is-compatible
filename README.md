@@ -7,7 +7,7 @@ is-compatible is a simple eslint plugin that checks whether imports from any of 
 ## How to install
 
 ```shell
-npm install @sunker/eslint-plugin-is-compatible --save-dev
+npm install @grafana/eslint-plugin-is-compatible --save-dev
 ```
 
 ### Configure
@@ -17,9 +17,9 @@ Add the following to your Grafana plugin's `.eslintrc`:
 ```js
 {
   ...
-  "plugins": ["@sunker/is-compatible"],
+  "plugins": ["@grafana/is-compatible"],
   "rules": {
-    "@sunker/is-compatible/import-exists": ["warn"]
+    "@grafana/is-compatible/import-exists": ["warn"]
   }
 }
 ```

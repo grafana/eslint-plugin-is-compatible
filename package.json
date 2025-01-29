@@ -1,6 +1,6 @@
 {
-  "name": "@sunker/eslint-plugin-is-compatible",
-  "version": "0.0.3",
+  "name": "@grafana/eslint-plugin-is-compatible",
+  "version": "0.0.1",
   "description": "An ESlint plugin for Grafana plugins to check compatibility with Grafana versions",
   "main": "./dist/index.js",
   "files": [
@@ -24,12 +24,12 @@
     "eslintplugin",
     "grafana"
   ],
-  "homepage": "https://www.npmjs.com/package/@sunker/eslint-plugin-is-compatible",
+  "homepage": "https://www.npmjs.com/package/@grafana/eslint-plugin-is-compatible",
   "repository": {
     "type": "git",
-    "url": "https://github.com/sunker/eslint-plugin-is-compatible"
+    "url": "https://github.com/grafana/eslint-plugin-is-compatible"
   },
-  "bugs": "https://github.com/sunker/eslint-plugin-is-compatible/issues",
+  "bugs": "https://github.com/grafana/eslint-plugin-is-compatible/issues",
   "scripts": {
     "build": "tsc --build",
     "build:diagnostics": "tsc --build --diagnostics",
