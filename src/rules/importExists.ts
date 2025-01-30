@@ -1,39 +1,14 @@
 import { RuleCreator } from '@typescript-eslint/utils/eslint-utils';
-import path from 'path';
-import fs from 'fs';
-import { Worker, MessageChannel, receiveMessageOnPort } from 'worker_threads';
-import semver from 'semver';
 export { ESLintUtils } from '@typescript-eslint/utils';
-import { getExportInfo, getRuntimeExports } from './utils';
+import { getExportInfo, getRuntimeExports } from './tscUtils';
 import { Exports } from '@grafana/levitate';
 import ts from 'typescript';
+import { getMinSupportedGrafanaVersion } from './minGrafanaVersion';
+import { installPackages } from './installPackages';
 
-const pluginJson = require(process.cwd() + '/src/plugin.json');
-const minVersion = semver.minVersion(pluginJson.dependencies.grafanaDependency);
-
-const { port1: localPort, port2: workerPort } = new MessageChannel();
-const shared = new SharedArrayBuffer(4);
-const workerData = { shared, port: workerPort };
-// the bundle does currently not include the worker module, so this is a temporary workaround for that
-const workerFile = fs.existsSync(path.join(__dirname, '/rules/installPackages.js'))
-  ? '/rules/installPackages.js'
-  : '/installPackages.js';
-new Worker(path.join(__dirname, workerFile), {
-  workerData,
-  transferList: [workerPort],
-});
-const int32 = new Int32Array(shared);
-console.log(`Installing version ${minVersion} of grafana packages...`);
-Atomics.wait(int32, 0, 0);
-
-const { packagePaths, message }: { packagePaths: Record<string, string>; message: string } =
-  receiveMessageOnPort(localPort)?.message;
-console.log(message);
-
-const packageExports: Record<string, { exports: Exports; program: ts.Program }> = {};
-Object.entries(packagePaths).forEach(([pkg, path]) => {
-  packageExports[pkg] = getExportInfo(path);
-});
+type InstallPackagesResult = { packagePaths: Record<string, string>; message: string; version: string };
+let packageExports: Record<string, { exports: Exports; program: ts.Program }> = {};
+let installPackagesResult: InstallPackagesResult;
 
 export const createRule = RuleCreator((name) => `https://my-website.io/eslint/${name}`);
 
@@ -42,7 +17,8 @@ export const importExists = createRule<[], MessageIds>({
   name: 'import-exists',
   meta: {
     docs: {
-      description: 'An example ESLint rule',
+      description:
+        'A rule that checks if the imported member is available in all Grafana runtime environments that the plugin supports.',
     },
     hasSuggestions: true,
     messages: {
@@ -52,7 +28,11 @@ export const importExists = createRule<[], MessageIds>({
     schema: [
       {
         type: 'object',
-        properties: {},
+        properties: {
+          minGrafanaVersion: {
+            type: 'string',
+          },
+        },
         additionalProperties: false,
       },
     ],
@@ -60,6 +40,29 @@ export const importExists = createRule<[], MessageIds>({
   },
   defaultOptions: [],
   create: (context) => {
+    let minSupportedVersion;
+
+    try {
+      minSupportedVersion = getMinSupportedGrafanaVersion(context);
+    } catch (e) {
+      console.error(e);
+      return {};
+    }
+
+    if (minSupportedVersion === null) {
+      console.error('Could not find minSupportedVersion');
+      return {};
+    }
+
+    if (installPackagesResult?.version !== minSupportedVersion) {
+      installPackagesResult = installPackages(minSupportedVersion);
+      console.log(installPackagesResult.message);
+
+      Object.entries(installPackagesResult.packagePaths).forEach(([pkg, path]) => {
+        packageExports[pkg] = getExportInfo(path);
+      });
+    }
+
     return {
       ImportSpecifier: async (node) => {
         if (node?.imported?.name) {
@@ -70,7 +73,7 @@ export const importExists = createRule<[], MessageIds>({
             if (!exportsExceptTypesAndInterfaces.includes(node.imported.name)) {
               context.report({
                 node,
-                data: { member: node.imported.name, package: `${identifier}@${minVersion}` },
+                data: { member: node.imported.name, package: `${identifier}@${installPackagesResult?.version}` },
                 messageId: 'issue:import',
               });
             }

@@ -46,4 +46,6 @@ npm publish
 
 ## How the Grafana package dependencies are being installed
 
-In the eslint plugin API, there's no init hook or such that allows us to download and install the Grafana package dependencies. The [eslint rules API](https://eslint.org/docs/latest/extend/plugins#rules-in-plugins) is syncronous so the deps cannot be installed (and should not be) during rule evaluation either. So currently, Nodejs worker threads are used to install the packages upon initialization of the eslint plugin. Installation happens in the `installPackages.js` file. The dependencies stored on local disk, so download of a particular version of the package only needs to happen once.
+The `import-exist` rule requires the minimum supported version of the Grafana packages to be installed in order to check compatibility. Installing these packages is an asynchronous action (unless they are retrieved from the cache). However, the [`createRule`](https://eslint.org/docs/latest/extend/custom-rules) API, which is used to define custom rules for imports, is synchronous.
+
+To work around this issue, Node.js worker threads are used to lock the main thread while installing the packages the first time the `import-exist` rule is executed.
