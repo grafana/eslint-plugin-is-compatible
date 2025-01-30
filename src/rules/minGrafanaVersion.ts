@@ -19,7 +19,8 @@ function getMinSupportedVersionFromPackageJson(): string {
 }
 
 export function getMinSupportedGrafanaVersion(context: Readonly<RuleContext<'issue:import', []>>) {
-  if ((context.options.at(0) as any).minGrafanaVersion) {
+  // TODO: Fix typings
+  if (context.options.length && (context.options.at(0) as any).minGrafanaVersion) {
     console.log('Using minGrafanaVersion from options');
     return (context.options.at(0) as any).minGrafanaVersion;
   }

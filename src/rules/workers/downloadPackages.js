@@ -1,15 +1,20 @@
 const fs = require('fs');
 const path = require('path');
 const workerData = require('worker_threads').workerData;
-const semver = require('semver');
 const fetch = require('node-fetch-commonjs');
 const os = require('os');
 const { spawnSync } = require('child_process');
 const { extract } = require('tar/x');
 
-const { shared, port } = workerData;
-const pluginJson = require(process.cwd() + '/src/plugin.json');
-const minVersion = semver.minVersion(pluginJson.dependencies.grafanaDependency);
+/* 
+ This worker tread receives the package version from the main thread and returns the path to the packages on disk.
+ If a package has been downloaded before, it will be cached and not downloaded again.
+
+ Large chunks of this code are copied from the Levitate code base. Why not use the Levitate code directly? 
+ Levitate doesn't support cjs modules which is required for the worker thread.
+ */
+
+const { shared, port, packageVersion } = workerData;
 const shouldCacheExternal = true;
 
 function pathExists(path) {
@@ -116,7 +121,7 @@ async function resolvePackage(packageName) {
   const tmpFolder = getTmpFolderName(packageName);
 
   if (pathExists(tmpFolder)) {
-    message = `Package version ${minVersion} resolved from cache`;
+    message = `Package version ${packageVersion} resolved from cache`;
     return getTypeDefinitionFilePath(path.join(tmpFolder, 'package'));
   }
 
@@ -138,13 +143,13 @@ const packagePaths = {
   '@grafana/runtime': '',
 };
 
-let message = `Successfully installed version ${minVersion}`;
+let message = `Successfully installed version ${packageVersion}`;
 
 const installPackages = async () => {
   return Promise.all(
     Object.keys(packagePaths).map((key) => {
       return new Promise((resolve) => {
-        resolvePackage(key + '@' + minVersion)
+        resolvePackage(key + '@' + packageVersion)
           .then((p) => {
             packagePaths[key] = p;
             resolve();
@@ -158,8 +163,8 @@ const installPackages = async () => {
   );
 };
 
-installPackages().then((paths) => {
-  port.postMessage({ packagePaths, message });
+installPackages().then(() => {
+  port.postMessage({ packagePaths, message, version: packageVersion });
   const int32 = new Int32Array(shared);
   Atomics.notify(int32, 0);
 });
