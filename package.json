@@ -1,6 +1,6 @@
 {
   "name": "@grafana/eslint-plugin-is-compatible",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "An ESlint plugin for Grafana plugins to check compatibility with Grafana versions",
   "main": "./dist/index.js",
   "files": [
