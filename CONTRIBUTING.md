@@ -2,22 +2,10 @@
 
 ## Local development
 
-Start a tsc watcher in a terminal window:
+Start a tsc and tsup for development.
 
 ```shell
-npm run watch
-```
-
-Bundle the plugin with tsup:
-
-```shell
-npm run tsup:watch
-```
-
-Run unit tests:
-
-```shell
-npm run test
+npm run start
 ```
 
 ### Testing the eslint plugin in a Grafana plugin
@@ -39,7 +27,6 @@ For your Grafana plugin to pickup your local changes, you may need to disable es
 ```shell
 npm run version patch|minor|major
 npm run build
-npm run tsup
 # to publish, you need to be login to the Grafana org at NPM
 npm publish
 ```
