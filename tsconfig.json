@@ -16,7 +16,7 @@
     "sourceMap": false,
     "target": "es2020",
     "rootDir": "src/",
-    "outDir": "lib/"
+    "outDir": "dist/"
   },
-  "include": ["src/**/*.ts", "src/rules/workers/downloadPackages.js"]
+  "include": ["src/**/*.ts"]
 }

@@ -5,7 +5,6 @@
   "main": "./dist/index.js",
   "files": [
     "docs/",
-    "lib/",
     "dist/"
   ],
   "publishConfig": {
@@ -31,13 +30,13 @@
   },
   "bugs": "https://github.com/grafana/eslint-plugin-is-compatible/issues",
   "scripts": {
-    "build": "tsc --build",
-    "build:diagnostics": "tsc --build --diagnostics",
-    "watch": "tsc --watch",
-    "tsup": "tsup ./lib",
-    "tsup:watch": "tsup ./lib --watch",
+    "build": "tsup",
+    "build:watch": "tsup --watch",
     "docs:init": "eslint-doc-generator --init-rule-docs",
     "docs:update": "eslint-doc-generator",
+    "start": "concurrently --names TSC,TSUP -c cyan,magenta \"npm run typecheck:watch\" \"npm run build:watch\"",
+    "typecheck": "tsc --noEmit",
+    "typecheck:watch": "tsc --watch --noEmit",
     "test": "vitest"
   },
   "license": "Apache-2.0",
@@ -56,8 +55,21 @@
     "@types/eslint": "^8.56.10",
     "@typescript-eslint/parser": "^7.13.0",
     "@typescript-eslint/rule-tester": "^7.13.0",
+    "concurrently": "^9.1.2",
     "eslint-doc-generator": "^1.7.1",
     "tsup": "^8.1.0",
     "vitest": "^1.6.0"
+  },
+  "tsup": {
+    "entry": [
+      "./src",
+      "!src/**/*.spec.ts"
+    ],
+    "format": [
+      "cjs"
+    ],
+    "clean": true,
+    "bundle": false,
+    "shims": true
   }
 }
