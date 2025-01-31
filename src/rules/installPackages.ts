@@ -1,13 +1,11 @@
-import path from "path";
 import { Worker, MessageChannel, receiveMessageOnPort } from "worker_threads";
 
 export function installPackages(packageVersion: string) {
   const { port1: localPort, port2: workerPort } = new MessageChannel();
   const shared = new SharedArrayBuffer(4);
   const workerData = { shared, port: workerPort, packageVersion };
-  // This path looks odd because it's relative to index.js file where
-  // this code ends up being bundled to.
-  new Worker(path.join(__dirname, "rules/workers/downloadPackages"), {
+
+  new Worker(new URL("./workers/downloadPackages.js", import.meta.url), {
     workerData,
     transferList: [workerPort],
   });

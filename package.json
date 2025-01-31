@@ -62,11 +62,14 @@
   },
   "tsup": {
     "entry": [
-      "./src"
+      "./src",
+      "!src/**/*.spec.ts"
     ],
     "format": [
       "cjs"
     ],
-    "clean": true
+    "clean": true,
+    "bundle": false,
+    "shims": true
   }
 }
