@@ -1,5 +1,6 @@
-import { importExists } from './importExists';
+import { TSESLint } from "@typescript-eslint/utils";
+import { importExists } from "./importExists";
 
 export const rules = {
-  'import-exists': importExists,
-};
+  "import-exists": importExists,
+} satisfies Record<string, TSESLint.RuleModule<string, Array<unknown>>>;
