@@ -20,7 +20,7 @@ ruleTester.run('eslint-plugin/import-exists', importExists, {
   ],
   invalid: [
     {
-      code: `import { createDataFrame } from '@grafana/data';`,
+      code: `import { createSausage } from '@grafana/data';`,
       errors: [
         {
           messageId: 'issue:import',
