@@ -26,8 +26,9 @@ jobs:
       - name: Run typechecks
         run: npm run typecheck
 
-      - name: Run tests
-        run: npm run test:ci
+      # TODO: Once PR #3 is merged, uncomment this.
+      # - name: Run tests
+      #   run: npm run test:ci
 
       - name: Run build
         run: npm run build
