@@ -21,7 +21,7 @@ jobs:
 
       # TODO: add linting to this repo.
       # - name: Lint files
-      #   run: yarn lint
+      #   run: npm run lint
 
       - name: Run typechecks
         run: npm run typecheck
