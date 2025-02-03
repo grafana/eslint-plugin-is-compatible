@@ -2,7 +2,8 @@ import { join } from "path";
 import { existsSync, mkdirSync } from "fs";
 import { tmpdir } from "os";
 import { execSync } from "child_process";
-import { ExportInfo, getExportInfo } from "./tscUtils";
+import { getExportInfo } from "./tscUtils";
+import { ExportInfo } from "./types";
 
 const packages = ["@grafana/data", "@grafana/ui", "@grafana/runtime"];
 

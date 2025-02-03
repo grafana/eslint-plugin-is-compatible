@@ -1,7 +1,7 @@
 import semver from "semver";
 import fs from "fs";
-import { RuleContext } from "@typescript-eslint/utils/ts-eslint";
-import { Options } from "./importExists";
+import type { RuleContext } from "@typescript-eslint/utils/ts-eslint";
+import type { Options } from "./types";
 
 export function getMinSupportedVersionFromPackageJson(): string {
   const path = process.cwd() + "/src/plugin.json";

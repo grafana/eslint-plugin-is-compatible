@@ -1,22 +1,15 @@
 import { RuleCreator } from "@typescript-eslint/utils/eslint-utils";
 export { ESLintUtils } from "@typescript-eslint/utils";
-import { ExportInfo, getRuntimeExports } from "./tscUtils";
+import { getRuntimeExports } from "./tscUtils";
 import { getMinSupportedGrafanaVersion } from "./minGrafanaVersion";
 import { getPackageExports } from "./getPackageExports";
+import type { ExportInfo, MessageIds, Options } from "./types";
 
 export const createRule = RuleCreator(
   (name) => `https://my-website.io/eslint/${name}`
 );
 
 let packageExports: Record<string, ExportInfo>;
-
-type MessageIds = "issue:import";
-
-export type Options = [
-  Partial<{
-    minGrafanaVersion: string;
-  }>
-];
 
 export const importExists = createRule<Options, MessageIds>({
   name: "import-exists",

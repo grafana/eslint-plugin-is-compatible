@@ -1,5 +1,6 @@
 import { Exports } from "@grafana/levitate";
 import ts, { Modifier, NodeArray } from "typescript";
+import { ExportInfo } from "./types";
 
 export function createTsProgram(
   fileName: string,
@@ -13,8 +14,6 @@ export function createTsProgram(
 
   return program;
 }
-
-export type ExportInfo = { exports: Exports; program: ts.Program };
 
 export function getExportInfo(rootFile: string): ExportInfo {
   const program = createTsProgram(rootFile);
