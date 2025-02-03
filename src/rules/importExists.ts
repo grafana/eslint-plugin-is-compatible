@@ -1,66 +1,55 @@
-import { RuleCreator } from '@typescript-eslint/utils/eslint-utils';
-export { ESLintUtils } from '@typescript-eslint/utils';
-import { getExportInfo, getRuntimeExports } from './tscUtils';
-import { Exports } from '@grafana/levitate';
-import ts from 'typescript';
-import { getMinSupportedGrafanaVersion } from './minGrafanaVersion';
-import { installPackages } from './installPackages';
+import { RuleCreator } from "@typescript-eslint/utils/eslint-utils";
+export { ESLintUtils } from "@typescript-eslint/utils";
+import { ExportInfo, getRuntimeExports } from "./tscUtils";
+import { getMinSupportedGrafanaVersion } from "./minGrafanaVersion";
+import { getPackageExports } from "./getPackageExports";
 
-type InstallPackagesResult = { packagePaths: Record<string, string>; message: string; version: string };
-let packageExports: Record<string, { exports: Exports; program: ts.Program }> = {};
-let installPackagesResult: InstallPackagesResult;
+export const createRule = RuleCreator(
+  (name) => `https://my-website.io/eslint/${name}`
+);
 
-export const createRule = RuleCreator((name) => `https://my-website.io/eslint/${name}`);
+let packageExports: Record<string, ExportInfo>;
 
-type MessageIds = 'issue:import';
-export const importExists = createRule<[], MessageIds>({
-  name: 'import-exists',
+type MessageIds = "issue:import";
+
+export type Options = [
+  Partial<{
+    minGrafanaVersion: string;
+  }>
+];
+
+export const importExists = createRule<Options, MessageIds>({
+  name: "import-exists",
   meta: {
     docs: {
       description:
-        'A rule that checks if the imported member is available in all Grafana runtime environments that the plugin supports.',
+        "A rule that checks if the imported member is available in all Grafana runtime environments that the plugin supports.",
     },
     hasSuggestions: true,
     messages: {
-      'issue:import':
+      "issue:import":
         'The member "{{member}}" is not available in all runtime environments that this plugin supports. Make sure to check if the member is undefined before accessing it, or it may cause runtime errors. "{{package}}" does not export member "{{member}}".',
     },
     schema: [
       {
-        type: 'object',
+        type: "object",
         properties: {
           minGrafanaVersion: {
-            type: 'string',
+            type: "string",
           },
         },
         additionalProperties: false,
       },
     ],
-    type: 'suggestion',
+    type: "suggestion",
   },
-  defaultOptions: [],
+  defaultOptions: [{}],
   create: (context) => {
-    let minSupportedVersion;
+    const minSupportedVersion = getMinSupportedGrafanaVersion(context);
 
-    try {
-      minSupportedVersion = getMinSupportedGrafanaVersion(context);
-    } catch (e) {
-      console.error(e);
-      return {};
-    }
-
-    if (minSupportedVersion === null) {
-      console.error('Could not find minSupportedVersion');
-      return {};
-    }
-
-    if (installPackagesResult?.version !== minSupportedVersion) {
-      installPackagesResult = installPackages(minSupportedVersion);
-      console.log(installPackagesResult.message);
-
-      Object.entries(installPackagesResult.packagePaths).forEach(([pkg, path]) => {
-        packageExports[pkg] = getExportInfo(path);
-      });
+    // This should only ever fire once otherwise every file will re-read the package exports
+    if (packageExports === undefined) {
+      packageExports = getPackageExports(minSupportedVersion);
     }
 
     return {
@@ -68,13 +57,21 @@ export const importExists = createRule<[], MessageIds>({
         if (node?.imported?.name) {
           // @ts-ignore
           const identifier = node.parent.source.value;
-          if (identifier in packageExports && Object.keys(packageExports[identifier].exports).length > 0) {
-            const exportsExceptTypesAndInterfaces = getRuntimeExports(packageExports[identifier].exports);
+          if (
+            identifier in packageExports &&
+            Object.keys(packageExports[identifier].exports).length > 0
+          ) {
+            const exportsExceptTypesAndInterfaces = getRuntimeExports(
+              packageExports[identifier].exports
+            );
             if (!exportsExceptTypesAndInterfaces.includes(node.imported.name)) {
               context.report({
                 node,
-                data: { member: node.imported.name, package: `${identifier}@${installPackagesResult?.version}` },
-                messageId: 'issue:import',
+                data: {
+                  member: node.imported.name,
+                  package: `${identifier}@${minSupportedVersion}`,
+                },
+                messageId: "issue:import",
               });
             }
           }
