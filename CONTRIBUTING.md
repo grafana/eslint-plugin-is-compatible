@@ -22,14 +22,9 @@ Follow instructions in [README.md](README.md) to configure the is-compatible rul
 
 For your Grafana plugin to pickup your local changes, you may need to disable eslint caching. Open `package.json` and remove the `--cache` arg from the `lint` script.
 
-## Publish to NPM
+## Publishing to NPM
 
-```shell
-npm run version patch|minor|major
-npm run build
-# to publish, you need to be login to the Grafana org at NPM
-npm publish
-```
+Creating a new release requires running the [NPM bump version action](https://github.com/grafana/eslint-plugin-is-compatible/actions/workflows/npm-bump-version.yml). Click the trigger workflow and specify the type of release (patch, minor, or major). The workflow will update package.json, commit and push which will in turn publish to npm and create a github release.
 
 ## How the Grafana package dependencies are being installed
 
