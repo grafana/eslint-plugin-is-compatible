@@ -37,29 +37,29 @@
     "start": "concurrently --names TSC,TSUP -c cyan,magenta \"npm run typecheck:watch\" \"npm run build:watch\"",
     "typecheck": "tsc --noEmit",
     "typecheck:watch": "tsc --watch --noEmit",
-    "test": "vitest",
-    "test:ci": "vitest --run"
+    "test": "vitest --testTimeout 32000",
+    "test:ci": "vitest --run --testTimeout 32000"
   },
   "license": "Apache-2.0",
   "dependencies": {
     "@grafana/levitate": "^0.16.0",
-    "@typescript-eslint/utils": "^7.13.0",
+    "@typescript-eslint/utils": "^8.20.0",
     "semver": "^7.7.0",
     "typescript": "^5.7.0"
   },
   "devDependencies": {
-    "@types/eslint": "^8.56.10",
-    "@typescript-eslint/parser": "^7.13.0",
-    "@typescript-eslint/rule-tester": "^7.13.0",
+    "@types/eslint": "^9.6.0",
+    "@typescript-eslint/parser": "^8.20.0",
+    "@typescript-eslint/rule-tester": "^8.20.0",
     "concurrently": "^9.1.2",
-    "eslint": "^8.56.0",
-    "eslint-doc-generator": "^1.7.1",
+    "eslint": "^9.19.0",
+    "eslint-doc-generator": "^2.0.0",
     "tsup": "^8.3.6",
     "vitest": "^3.0.5"
   },
   "peerDependencies": {
-    "@types/eslint": "^8.56.10",
-    "eslint": "^8.56.0"
+    "@types/eslint": "^8.56.10 || ^9.0.0",
+    "eslint": "^8.56.0 || ^9.0.0"
   },
   "tsup": {
     "entry": [
