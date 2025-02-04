@@ -49,9 +49,9 @@ export const importExists = createRule<Options, MessageIds>({
     return {
       ImportSpecifier: (node) => {
         if (node?.imported?.type === AST_NODE_TYPES.Identifier) {
-          // @ts-ignore
-          const identifier = node.parent.source.value;
+          const identifier = node.parent.source?.value;
           if (
+            identifier &&
             identifier in packageExports &&
             Object.keys(packageExports[identifier].exports).length > 0
           ) {
