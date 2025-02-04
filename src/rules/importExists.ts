@@ -1,9 +1,10 @@
 import { RuleCreator } from "@typescript-eslint/utils/eslint-utils";
-export { ESLintUtils } from "@typescript-eslint/utils";
+export { ESLintUtils, AST_NODE_TYPES } from "@typescript-eslint/utils";
 import { getRuntimeExports } from "./tscUtils";
 import { getMinSupportedGrafanaVersion } from "./minGrafanaVersion";
 import { getPackageExports } from "./getPackageExports";
 import type { ExportInfo, MessageIds, Options } from "./types";
+import { AST_NODE_TYPES } from "@typescript-eslint/utils";
 
 export const createRule = RuleCreator(
   (name) => `https://my-website.io/eslint/${name}`
@@ -46,8 +47,8 @@ export const importExists = createRule<Options, MessageIds>({
     }
 
     return {
-      ImportSpecifier: async (node) => {
-        if (node?.imported?.name) {
+      ImportSpecifier: (node) => {
+        if (node?.imported?.type === AST_NODE_TYPES.Identifier) {
           // @ts-ignore
           const identifier = node.parent.source.value;
           if (
