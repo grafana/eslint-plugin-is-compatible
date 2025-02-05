@@ -1,41 +1,38 @@
-import { RuleCreator } from "@typescript-eslint/utils/eslint-utils";
-export { ESLintUtils, AST_NODE_TYPES } from "@typescript-eslint/utils";
-import { getRuntimeExports } from "./tscUtils";
-import { getMinSupportedGrafanaVersion } from "./minGrafanaVersion";
-import { getPackageExports } from "./getPackageExports";
-import type { ExportInfo, MessageIds, Options } from "./types";
-import { AST_NODE_TYPES } from "@typescript-eslint/utils";
+import { RuleCreator } from '@typescript-eslint/utils/eslint-utils';
+import { getRuntimeExports } from './tscUtils';
+import { getMinSupportedGrafanaVersion } from './minGrafanaVersion';
+import { getPackageExports } from './getPackageExports';
+import type { ExportInfo, MessageIds, Options } from './types';
+import { AST_NODE_TYPES } from '@typescript-eslint/utils';
 
-export const createRule = RuleCreator(
-  (name) => `https://my-website.io/eslint/${name}`
-);
+const createRule = RuleCreator((name) => `https://my-website.io/eslint/${name}`);
 
 let packageExports: Record<string, ExportInfo>;
 
 export const importExists = createRule<Options, MessageIds>({
-  name: "import-exists",
+  name: 'import-exists',
   meta: {
     docs: {
       description:
-        "A rule that checks if the imported member is available in all Grafana runtime environments that the plugin supports.",
+        'A rule that checks if the imported member is available in all Grafana runtime environments that the plugin supports.',
     },
     hasSuggestions: true,
     messages: {
-      "issue:import":
+      'issue:import':
         'The member "{{member}}" is not available in all runtime environments that this plugin supports. Make sure to check if the member is undefined before accessing it, or it may cause runtime errors. "{{package}}" does not export member "{{member}}".',
     },
     schema: [
       {
-        type: "object",
+        type: 'object',
         properties: {
           minGrafanaVersion: {
-            type: "string",
+            type: 'string',
           },
         },
         additionalProperties: false,
       },
     ],
-    type: "suggestion",
+    type: 'suggestion',
   },
   defaultOptions: [{}],
   create: (context) => {
@@ -55,9 +52,7 @@ export const importExists = createRule<Options, MessageIds>({
             identifier in packageExports &&
             Object.keys(packageExports[identifier].exports).length > 0
           ) {
-            const exportsExceptTypesAndInterfaces = getRuntimeExports(
-              packageExports[identifier].exports
-            );
+            const exportsExceptTypesAndInterfaces = getRuntimeExports(packageExports[identifier].exports);
             if (!exportsExceptTypesAndInterfaces.includes(node.imported.name)) {
               context.report({
                 node,
@@ -65,7 +60,7 @@ export const importExists = createRule<Options, MessageIds>({
                   member: node.imported.name,
                   package: `${identifier}@${minSupportedVersion}`,
                 },
-                messageId: "issue:import",
+                messageId: 'issue:import',
               });
             }
           }

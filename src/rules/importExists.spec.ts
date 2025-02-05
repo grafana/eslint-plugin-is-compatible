@@ -1,6 +1,6 @@
-import { RuleTester } from "@typescript-eslint/rule-tester";
-import tsEslintParser from "@typescript-eslint/parser";
-import { importExists } from "./importExists";
+import { RuleTester } from '@typescript-eslint/rule-tester';
+import tsEslintParser from '@typescript-eslint/parser';
+import { importExists } from './importExists';
 
 const ruleTester = new RuleTester({
   languageOptions: {
@@ -13,7 +13,7 @@ const ruleTester = new RuleTester({
   },
 });
 
-ruleTester.run("import-exists", importExists, {
+ruleTester.run('import-exists', importExists, {
   valid: [
     {
       code: `import { LoadingPlaceholder } from '@grafana/ui';`,
@@ -25,7 +25,7 @@ ruleTester.run("import-exists", importExists, {
       code: `import { createSausage } from '@grafana/data';`,
       errors: [
         {
-          messageId: "issue:import",
+          messageId: 'issue:import',
         },
       ],
     },

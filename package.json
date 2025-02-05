@@ -34,6 +34,8 @@
     "build:watch": "tsup --watch",
     "docs:init": "eslint-doc-generator --init-rule-docs",
     "docs:update": "eslint-doc-generator",
+    "lint": "eslint --cache ./src",
+    "lint:fix": "npm run lint -- --fix",
     "start": "concurrently --names TSC,TSUP -c cyan,magenta \"npm run typecheck:watch\" \"npm run build:watch\"",
     "typecheck": "tsc --noEmit",
     "typecheck:watch": "tsc --watch --noEmit",
@@ -48,6 +50,7 @@
     "typescript": "^5.7.0"
   },
   "devDependencies": {
+    "@grafana/eslint-config": "^8.0.0",
     "@types/eslint": "^9.6.0",
     "@types/semver": "^7.5.8",
     "@typescript-eslint/parser": "^8.20.0",
@@ -55,6 +58,7 @@
     "concurrently": "^9.1.2",
     "eslint": "^9.19.0",
     "eslint-doc-generator": "^2.0.0",
+    "prettier": "3.4.2",
     "tsup": "^8.3.6",
     "vitest": "^3.0.5"
   },

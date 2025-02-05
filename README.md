@@ -60,8 +60,8 @@ Refer to the [contributing guidelines](./CONTRIBUTING.md).
 
 💡 Manually fixable by [editor suggestions](https://eslint.org/docs/latest/use/core-concepts#rule-suggestions).
 
-| Name                                         | Description                                                                                                          | 💡 |
-| :------------------------------------------- | :------------------------------------------------------------------------------------------------------------------- | :- |
-| [import-exists](docs/rules/import-exists.md) | A rule that checks if the imported member is available in all Grafana runtime environments that the plugin supports. | 💡 |
+| Name                                         | Description                                                                                                          | 💡  |
+| :------------------------------------------- | :------------------------------------------------------------------------------------------------------------------- | :-- |
+| [import-exists](docs/rules/import-exists.md) | A rule that checks if the imported member is available in all Grafana runtime environments that the plugin supports. | 💡  |
 
 <!-- end auto-generated rules list -->
