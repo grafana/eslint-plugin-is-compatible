@@ -9,7 +9,7 @@ const packages = ["@grafana/data", "@grafana/ui", "@grafana/runtime"];
 
 export function downloadPackages(tempDir: string, version: string) {
   console.log(
-    `Please wait... downloading Grafana NPM packages for version ${version}`
+    `Please wait... downloading Grafana NPM packages ${tempDir} for version ${version}`
   );
   mkdirSync(tempDir, { recursive: true });
   execSync("npm init -y", { cwd: tempDir });
