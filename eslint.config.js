@@ -1,5 +1,5 @@
 // @ts-check
-const grafanaConfig = require("@grafana/eslint-config/flat");
+const grafanaConfig = require('@grafana/eslint-config/flat');
 
 // If you edit this config consider running `npx -y @eslint/config-inspector@latest` first.
 
@@ -8,15 +8,15 @@ const grafanaConfig = require("@grafana/eslint-config/flat");
  */
 module.exports = [
   {
-    name: "eslint-plugin-is-compatible/ignores",
+    name: 'eslint-plugin-is-compatible/ignores',
     ignores: [
-      ".github",
-      "**/.*", // dotfiles aren't ignored by default in FlatConfig,
+      '.github',
+      '**/.*', // dotfiles aren't ignored by default in FlatConfig,
     ],
   },
   {
     ...grafanaConfig,
-    name: "eslint-plugin-is-compatible/defaults",
-    files: ["**/*.ts"],
+    name: 'eslint-plugin-is-compatible/defaults',
+    files: ['**/*.ts'],
   },
 ];

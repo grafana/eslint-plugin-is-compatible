@@ -1,11 +1,8 @@
-import { Exports } from "@grafana/levitate";
-import ts, { Modifier, NodeArray } from "typescript";
-import { ExportInfo } from "./types";
+import { Exports } from '@grafana/levitate';
+import ts, { Modifier, NodeArray } from 'typescript';
+import { ExportInfo } from './types';
 
-export function createTsProgram(
-  fileName: string,
-  compilerOptions: ts.CompilerOptions = {}
-): ts.Program {
+export function createTsProgram(fileName: string, compilerOptions: ts.CompilerOptions = {}): ts.Program {
   const program = ts.createProgram([fileName], {
     ...compilerOptions,
   });
@@ -52,14 +49,11 @@ export function getExportedSymbolsForProgram(program: ts.Program): Exports {
   return programExports;
 }
 
-const subMembersIgnoreList = ["prototype", "__proto__", "__constructor"];
+const subMembersIgnoreList = ['prototype', '__proto__', '__constructor'];
 
-function getExportSubMembers(
-  symbol: ts.Symbol,
-  program: ts.Program
-): Record<string, ts.Symbol> {
+function getExportSubMembers(symbol: ts.Symbol, program: ts.Program): Record<string, ts.Symbol> {
   const checker = program.getTypeChecker();
-  const parentName = symbol.getName() || "";
+  const parentName = symbol.getName() || '';
   const subMembers: Record<string, ts.Symbol> = {};
   const declaredType = checker.getDeclaredTypeOfSymbol(symbol);
   const resolvedSymbol = declaredType.getSymbol() ?? symbol;
@@ -70,7 +64,7 @@ function getExportSubMembers(
     members.forEach((value, key) => {
       if (
         value !== undefined &&
-        typeof key === "string" &&
+        typeof key === 'string' &&
         !subMembersIgnoreList.includes(key) &&
         !isSymbolPrivateDeclaration(value)
       ) {
@@ -83,11 +77,7 @@ function getExportSubMembers(
   const exports = resolvedSymbol.exports ?? symbol.exports;
   if (exports) {
     exports.forEach((value, key) => {
-      if (
-        typeof key === "string" &&
-        !subMembersIgnoreList.includes(key) &&
-        value
-      ) {
+      if (typeof key === 'string' && !subMembersIgnoreList.includes(key) && value) {
         subMembers[`${parentName}.${key}`] = value;
       }
     });
@@ -97,13 +87,8 @@ function getExportSubMembers(
 
 export function getRuntimeExports(exports: Exports) {
   const result = [];
-  for (const [currentExportName, currentExportSymbol] of Object.entries(
-    exports
-  )) {
-    if (
-      !(currentExportSymbol.flags & ts.SymbolFlags.Interface) &&
-      !(currentExportSymbol.flags & ts.SymbolFlags.Type)
-    ) {
+  for (const [currentExportName, currentExportSymbol] of Object.entries(exports)) {
+    if (!(currentExportSymbol.flags & ts.SymbolFlags.Interface) && !(currentExportSymbol.flags & ts.SymbolFlags.Type)) {
       result.push(currentExportName);
     }
   }
@@ -120,21 +105,18 @@ export function isSymbolPrivateDeclaration(symbol: ts.Symbol): boolean {
     // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Classes/Private_class_fields
     if (
       symbol.flags === ts.SymbolFlags.Property &&
-      (symbol.getName().startsWith("#") ||
-        symbol.escapedName.toString().startsWith("__#"))
+      (symbol.getName().startsWith('#') || symbol.escapedName.toString().startsWith('__#'))
     ) {
       return true;
     }
 
     return (symbol.valueDeclaration,
-    ts.isPropertyDeclaration(symbol.valueDeclaration) ||
-      ts.isMethodDeclaration(symbol.valueDeclaration)) &&
-      "modifiers" in symbol.valueDeclaration
-      ? (symbol.valueDeclaration.modifiers as NodeArray<Modifier>)?.some(
+    ts.isPropertyDeclaration(symbol.valueDeclaration) || ts.isMethodDeclaration(symbol.valueDeclaration)) &&
+      'modifiers' in symbol.valueDeclaration
+      ? ((symbol.valueDeclaration.modifiers as NodeArray<Modifier>)?.some(
           (modifier) =>
-            modifier.kind === ts.SyntaxKind.PrivateKeyword ||
-            modifier.kind === ts.SyntaxKind.ProtectedKeyword
-        ) ?? false
+            modifier.kind === ts.SyntaxKind.PrivateKeyword || modifier.kind === ts.SyntaxKind.ProtectedKeyword
+        ) ?? false)
       : false;
   } catch (e) {
     return false;
